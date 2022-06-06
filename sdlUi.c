@@ -36,7 +36,7 @@ int init_ui()
 
 void draw_sq(int i, int j)
 {
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    SDL_SetRenderDrawColor(renderer, WHITE_COL);
     SDL_Rect r;
     r.x = WINDOW_W/64*(i%64);
     r.y = WINDOW_H/32*(j%32);
