@@ -42,16 +42,16 @@ void draw_sq(int i, int j)
     r.y = WINDOW_H/32*(j%32);
     r.w = WINDOW_W/64;
     r.h = WINDOW_H/32;
-    SDL_RenderFillRect( renderer, &r );
+    SDL_RenderFillRect(renderer, &r);
     SDL_RenderPresent(renderer);
 }
+
 
 void mk_black_screen()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
-
 }
 
 
@@ -72,7 +72,6 @@ void quit()
 {
     // Close and destroy the window
     SDL_DestroyWindow(window);
-
     // Clean up
     SDL_Quit();
 }
