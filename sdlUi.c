@@ -3,28 +3,27 @@
 
 SDL_Window *window;
 SDL_Renderer *renderer;
-SDL_Surface *surface;
 SDL_Event e;
 
 
 int init_ui()
 {
-    SDL_Init(SDL_INIT_VIDEO);              // Initialize SDL2
+    SDL_Init(SDL_INIT_VIDEO);     // Initialize SDL2
     window = SDL_CreateWindow(
-        "chip8 emulator",                  // window title
-        SDL_WINDOWPOS_UNDEFINED,           // initial x position
-        SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        WINDOW_W, WINDOW_H,                // height, in pixels
-        SDL_WINDOW_OPENGL                  // flags - see below
+        "chip8 emulator",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        WINDOW_W, WINDOW_H,
+        SDL_WINDOW_OPENGL
     );
 
     if (window == NULL) {
-        printf("Could not create window: %s\n", SDL_GetError());
+        printf("error: %s\n", SDL_GetError());
         return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    surface = SDL_CreateRGBSurface(0, WINDOW_W, WINDOW_H, 32, 0, 0, 0, 0);
+    renderer = SDL_CreateRenderer(window,
+                -1, SDL_RENDERER_SOFTWARE);
     if(!renderer) {
         fprintf(stderr, "Could not create renderer\n");
         return 1;
