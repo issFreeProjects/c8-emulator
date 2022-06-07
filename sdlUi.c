@@ -1,79 +1,55 @@
-#include <SDL2/SDL.h>
 #include <sdlUi.h>
 
-SDL_Window *window;
-SDL_Renderer *renderer;
-SDL_Event e;
+Uint8 * keys;
 
-
-int init_ui()
+void handel_events()
 {
-    SDL_Init(SDL_INIT_VIDEO);     // Initialize SDL2
-    window = SDL_CreateWindow(
-        "chip8 emulator",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        WINDOW_W, WINDOW_H,
-        SDL_WINDOW_OPENGL
-    );
-
-    if (window == NULL) {
-        printf("error: %s\n", SDL_GetError());
-        return 1;
+    SDL_PollEvent (&e);
+    switch(e.type){
+        case SDL_QUIT:
+            exit(0);
     }
-
-    renderer = SDL_CreateRenderer(window,
-                -1, SDL_RENDERER_SOFTWARE);
-    if(!renderer) {
-        fprintf(stderr, "Could not create renderer\n");
-        return 1;
+    if(keys[SDLK_p]){
+            while(1){
+            SDL_WaitEvent(&e);
+            keys = SDL_GetKeyState(NULL);
+            if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT)
+                exit(1);
+            if(keys[SDLK_u] || keys[SDLK_p])
+                break;
+            }
     }
-
-    mk_black_screen();
-    return 0;
 }
 
 
-void draw_sq(int i, int j, int color)
+void init_ui()
 {
-    if(color)
-         SDL_SetRenderDrawColor(renderer, BLACK_COL);
-    else SDL_SetRenderDrawColor(renderer, WHITE_COL);
-    SDL_Rect r;
-    r.x = WINDOW_W/64*(i%64);
-    r.y = WINDOW_H/32*(j%32);
-    r.w = WINDOW_W/64;
-    r.h = WINDOW_H/32;
-    SDL_RenderFillRect(renderer, &r);
-    SDL_RenderPresent(renderer);
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_SetVideoMode(
+            WINDOW_W, WINDOW_H,
+            32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    keys = SDL_GetKeyState(NULL);
 }
 
 
-void mk_black_screen()
+void draw_sq(unsigned char* screen)
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-}
-
-
-int w()
-{
-    while(1) { // SDL loop
-      while( SDL_PollEvent( &e ) != 0 ) {
-        if( e.type == SDL_QUIT ) {
-          quit();
-          return 0;
+    int x, y, i, j;
+    SDL_Surface *surface = SDL_GetVideoSurface();
+    SDL_LockSurface(surface);
+    Uint32 *pixels = (Uint32 *)surface->pixels;
+    for (x=0; x<WINDOW_W; x++)
+        for(y=0; y<WINDOW_H; y++){
+            i = x/(WINDOW_W/64);
+            j = y/(WINDOW_H/32);
+            pixels[x+y*WINDOW_W] = screen[i+j*64] ? 0xffffffff: 0;
         }
-      } // end of handling event.
-    }
+    SDL_UnlockSurface(surface);
+    SDL_Flip(surface);
 }
 
 
 void quit()
 {
-    // Close and destroy the window
-    SDL_DestroyWindow(window);
-    // Clean up
     SDL_Quit();
 }
