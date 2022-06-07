@@ -189,7 +189,7 @@ void c8_exec(C8 *c8)
 void sdl_main_loop(C8 *c8, unsigned char *screen)
 {
     c8_exec(c8);
-    draw_sq(screen);
+    draw_screen(screen, col_n, row_n);
 }
 
 
