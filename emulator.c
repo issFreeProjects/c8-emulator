@@ -11,7 +11,6 @@
 #define ni     ch8->pc += 2
 
 unsigned char screen[sc_s];
-int times = 0;
 
 typedef struct chip8{
   unsigned char memory[mem_s];
@@ -179,10 +178,9 @@ void c8_exec(C8 *c8)
 {
     unsigned short opcode;
     opcode = c8->memory[c8->pc]<<8 | c8->memory[c8->pc+1];
-    printf("%d exec %04X at PC %04X, I:%02X SP:%02X\n",
-                  times, opcode, c8->pc, c8->I, c8->sp);
+    printf("exec %04X PC:%04X, I:%02X, SP:%02X\n",
+                  opcode, c8->pc, c8->I, c8->sp);
     c8_execH(opcode, c8);
-    times++;
 }
 
 
