@@ -2,22 +2,7 @@
 #include <sdlUi.h>
 #include <string.h>
 #include <stdlib.h>
-
-#define mem_s  4096
-#define pmem_s 16
-#define sc_s   64*32
-#define row_n  32
-#define col_n  64
-#define ni     ch8->pc += 2
-
-unsigned char screen[sc_s];
-
-typedef struct chip8{
-  unsigned char memory[mem_s];
-  unsigned char  V[pmem_s], Key[pmem_s], stack[pmem_s];
-  unsigned short I, pc, sp;
-  unsigned char  delay_timer, sound_timer;
-} C8;
+#include <c8_emulator.h>
 
 
 
@@ -33,7 +18,7 @@ void c8_clear_mem(C8 *c8){
 }
 
 
-void read_rom_to_mem(C8 *c8, char* path)
+void c8_read_rom_to_mem(C8 *c8, char* path)
 {
     FILE *f = fopen(path, "rb");
     if(!f){
@@ -42,16 +27,6 @@ void read_rom_to_mem(C8 *c8, char* path)
     }
 
     fread(c8->memory+512, 1, mem_s-512, f);
-}
-
-
-void c8_timers(C8 *c8){
-    if(c8->delay_timer > 0)
-        c8->delay_timer--;
-    if(c8->sound_timer > 0)
-        c8->sound_timer--;
-    if(c8->sound_timer != 0)
-        printf("%c", 7);
 }
 
 
@@ -184,23 +159,22 @@ void c8_exec(C8 *c8)
 }
 
 
-void sdl_main_loop(C8 *c8, unsigned char *screen)
+void c8_sdl_main_loop(C8 *c8, unsigned char *screen)
 {
     c8_exec(c8);
     draw_screen(screen, col_n, row_n);
 }
 
 
-int main(int argc, char** argv)
+void c8_init(char* path)
 {
-  C8 c8;
-  printf("Welcome to c8 emulator :)\n");
-  init_ui();
-  c8_clear_mem(&c8);
-  read_rom_to_mem(&c8, argv[1]);
-  while(1){
-    sdl_main_loop(&c8, screen);
-    handel_events();
-  }
-  return 0;
+    C8 c8;
+    printf("Welcome to c8 emulator :)\n");
+    init_ui();
+    c8_clear_mem(&c8);
+    c8_read_rom_to_mem(&c8, path);
+    while(1){
+        c8_sdl_main_loop(&c8, screen);
+        handel_events();
+    }
 }
