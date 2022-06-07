@@ -11,7 +11,7 @@ void c8_clear_mem(C8 *c8){
     memset(c8->V,      0, pmem_s);
     memset(c8->Key,    0, pmem_s);
     memset(c8->stack,  0, pmem_s);
-    memset(screen, 0, sc_s  );
+    memset(screen,     0, sc_s  );
     
     c8->pc = 512;
     c8->sp = 0;
@@ -144,6 +144,19 @@ void c8_execH(unsigned short opcode, C8 *c8)
         c8->pc += 2;
         break;
       case 0xe:
+        x = opcode&0xf00;
+        switch(opcode&0xff){
+          case 0x9e:
+            if(keymap[c8->V[x]])
+                c8->pc += 4;
+            else c8->pc += 2;
+            break;
+          case 0xa1:
+            if(!keymap[c8->V[x]])
+                c8->pc += 4;
+            else c8->pc += 2;
+            break;
+        }
         break;
     }
 }

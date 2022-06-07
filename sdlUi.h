@@ -8,6 +8,14 @@
 SDL_Event e;
 Uint8 *keys;
 
+static int keymap[0x10] = { 
+    SDLK_0, SDLK_1, SDLK_2, SDLK_3,
+    SDLK_4, SDLK_5, SDLK_6, SDLK_7,
+    SDLK_8, SDLK_9, SDLK_a, SDLK_b,
+    SDLK_c, SDLK_d, SDLK_e, SDLK_f
+};
+
+
 void handel_events();
 void init_ui();
 void draw_screen(unsigned char* screen, int W, int H);
