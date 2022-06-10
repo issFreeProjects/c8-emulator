@@ -1,24 +1,6 @@
 #include <sdlUi.h>
 
 
-void handel_events()
-{
-    SDL_PollEvent (&e);
-    if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT)
-        quit(0);
-    if(keys[SDLK_p]){
-        while(1){
-            SDL_WaitEvent(&e);
-            keys = SDL_GetKeyState(NULL);
-            if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT)
-                quit(0);
-            if(keys[SDLK_u] || keys[SDLK_p])
-                break;
-        }
-    }
-}
-
-
 void init_ui()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
