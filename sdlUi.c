@@ -1,8 +1,11 @@
 #include <sdlUi.h>
 
+int pix_W, pix_H;
 
-void init_ui()
+
+void init_ui(int PW, int PH)
 {
+    pix_W = PW; pix_H = PH;
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_SetVideoMode(
             WINDOW_W, WINDOW_H,
@@ -11,7 +14,7 @@ void init_ui()
 }
 
 
-void draw_screen(unsigned char* screen, int pix_W, int pix_H)
+void draw_screenH(unsigned char* screen, int bg_color, int fg_color)
 {
     int x, y, i, j;
     SDL_Surface *surface = SDL_GetVideoSurface();
@@ -23,10 +26,22 @@ void draw_screen(unsigned char* screen, int pix_W, int pix_H)
         {
             i = x/(WINDOW_W/pix_W);
             j = y/(WINDOW_H/pix_H);
-            pixels[x+y*WINDOW_W] = screen[i+j*pix_W] ? WHITE_COL: BLACK_COL;
+            pixels[x+y*WINDOW_W] = screen[i+j*pix_W] ? fg_color : bg_color;
         }
     SDL_UnlockSurface(surface);
     SDL_Flip(surface);
+}
+
+
+void draw_screen(unsigned char* screen)
+{
+    draw_screenH(screen, BLACK_COL, WHITE_COL);
+}
+
+
+void draw_screen_pause(unsigned char* screen)
+{
+    draw_screenH(screen, BLACK_COL, RED_COL);
 }
 
 

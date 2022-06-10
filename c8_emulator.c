@@ -6,18 +6,6 @@
 
 C8 c8;
 
-
-void c8_reset()
-{
-      memset(c8.V,      0, pmem_s);
-      memset(c8.Key,    0, pmem_s);
-      memset(c8.stack,  0, pmem_s);
-      memset(screen,    0, sc_s  );
-
-      c8.pc = 512;
-      c8.sp = 0;
-}
-
 void handel_events()
 {
     SDL_PollEvent (&e);
@@ -25,42 +13,48 @@ void handel_events()
     if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT)
         quit(0);
     if(keys[SDLK_r]){
-       // reset the cpu
-       c8_reset();
+       // reset* the cpu
+       c8_clear_mem();
+       c8_load_rom(&c8);
+       c8_load_fonts(&c8);
     }if(keys[SDLK_p]){
+        draw_screen_pause(screen);
         while(1){
             SDL_WaitEvent(&e);
             keys = SDL_GetKeyState(NULL);
-            if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT)
+            if(keys[SDLK_ESCAPE] || keys[SDLK_q] || e.type==SDL_QUIT){
                 quit(0);
-            if(keys[SDLK_u] || keys[SDLK_p])
+            }if(keys[SDLK_u] || keys[SDLK_p]){
+                draw_screen(screen);
                 break;
+            }
         }
     }
 }
 
 
-void c8_clear_mem(C8 *c8){
-    memset(c8->memory, 0, mem_s );
-    memset(c8->V,      0, pmem_s);
-    memset(c8->Key,    0, pmem_s);
-    memset(c8->stack,  0, pmem_s);
-    memset(screen,     0, sc_s  );
-    
-    c8->pc = 512;
-    c8->sp = 0;
+void c8_clear_mem(){
+      memset(c8.memory, 0, mem_s );
+      memset(c8.V,      0, pmem_s);
+      memset(c8.Key,    0, pmem_s);
+      memset(c8.stack,  0, pmem_s);
+      memset(screen,    0, sc_s  );
+
+      c8.pc = 512;
+      c8.sp = 0;   
 }
 
 
-void c8_read_rom_to_mem(C8 *c8, char* path)
+void c8_load_rom(C8 *c8)
 {
-    FILE *f = fopen(path, "rb");
+    FILE *f = fopen(c8->rom_path, "rb");
     if(!f){
       printf("file not found!");
       exit(1);
     }
 
     fread(c8->memory+512, 1, mem_s-512, f);
+    fclose(f);
 }
 
 
@@ -89,7 +83,7 @@ void c8_execH(unsigned short opcode, C8 *c8)
               break;
             case 0xe0:
               memset(screen, 0, sc_s);
-              draw_screen(screen, col_n, row_n);
+              draw_screen(screen);
               c8->pc += 2;
               break;
         }
@@ -211,7 +205,7 @@ void c8_execH(unsigned short opcode, C8 *c8)
                 }
             }
         }
-        draw_screen(screen, col_n, row_n);
+        draw_screen(screen);
         c8->pc += 2;
         break;
       case 0xe:                                           // 0xe***
@@ -294,14 +288,6 @@ void c8_exec(C8 *c8)
 }
 
 
-void c8_sdl_main_loop(C8 *c8)
-{
-  int t;
-  for(t=0; t<10; t++)
-    c8_exec(c8);
-}
-
-
 void c8_load_fonts(C8 *c8)
 {
     for(int i=0; i<80; i++)
@@ -312,12 +298,13 @@ void c8_load_fonts(C8 *c8)
 void c8_init(char* path)
 {
     printf("Welcome to c8 emulator :)\n");
-    init_ui();
-    c8_clear_mem(&c8);
-    c8_read_rom_to_mem(&c8, path);
+    init_ui(col_n, row_n);
+    c8_clear_mem();
+    c8.rom_path = path;
+    c8_load_rom(&c8);
     c8_load_fonts(&c8);
     while(1){
-        c8_sdl_main_loop(&c8);
+        c8_exec(&c8);
         handel_events(keys);
     }
 }

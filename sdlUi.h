@@ -3,6 +3,7 @@
 #define WINDOW_W  1024
 #define WINDOW_H  512
 #define WHITE_COL 0xffffffff
+#define RED_COL   0xffff0000
 #define BLACK_COL 0
 
 SDL_Event e;
@@ -16,6 +17,7 @@ static int c8_keymap[0x10] = {
 };
 
 
-void init_ui();
-void draw_screen(unsigned char* screen, int W, int H);
+void init_ui(int PW, int PH);
+void draw_screen(unsigned char* screen);
+void draw_screen_pause(unsigned char* screen);
 void quit(int status);

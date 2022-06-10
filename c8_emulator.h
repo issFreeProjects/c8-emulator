@@ -12,6 +12,7 @@ typedef struct chip8{
   unsigned char  V[pmem_s+1], Key[pmem_s+1];
   unsigned short I, pc, sp, stack[pmem_s];
   unsigned char  delay_timer, sound_timer;
+  char* rom_path;
 } C8; 
 
 
@@ -34,9 +35,9 @@ static unsigned char c8_fontset[80] =  {
   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-void c8_clear_mem(C8 *c8);
-void c8_read_rom_to_mem(C8 *c8, char* path);
+void c8_clear_mem();
+void c8_load_fonts(C8 *c8);
+void c8_load_rom(C8 *c8);
 void c8_execH(unsigned short opcode, C8 *c8);
 void c8_exec(C8 *c8);
-void c8_sdl_main_loop(C8 *c8);
 void c8_init(char* path);
